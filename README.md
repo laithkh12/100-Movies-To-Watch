@@ -1,29 +1,46 @@
-## 100 Movies that You Must Watch
-
-# Objective
-
-Scrape the top 100 movies of all time from a website. Generate a text file called `movies.txt` that lists the movie titles in ascending order (starting from 1). 
-The result should look something like this:
-
+# 🎥 Best Movies Scraper
+## 📝 Overview
+This Python script scrapes a list of movies from a specified webpage on Empire Online and saves the titles in reverse order to a text file, movies.txt. By leveraging the Wayback Machine, it accesses a cached version of the page to avoid issues due to website updates.
+## 📚 Requirements
+This script requires the following Python libraries:
+- requests
+- BeautifulSoup (part of bs4)
+To install these packages, run:
+```bash
+pip install requests beautifulsoup4
 ```
-1) The Godfather
-2) The Empire Strikes Back
-3) The Dark Knight
-4) The Shawshank Redemption
-... and so on
-```
-The central idea behind this project is to be able to use BeautifulSoup to obtain some data - like movie titles - from a website like Empire's (or from, say Timeout or Stacker that have curated similar lists). 
-
-### ⚠️ Important: Use the Internet Archive's URL
-
-Since websites change very frequently, **use this link** 
-```
+## 🚀 Usage
+1. Set the URL: The script uses a cached URL from the Internet Archive's Wayback Machine:
+```python
 URL = "https://web.archive.org/web/20200518073855/https://www.empireonline.com/movies/features/best-movies-2/"
 ```
-from the Internet Archive's Wayback machine. That way your work will match the solution video.
+2. Run the Script: Execute the script to generate a movies.txt file with a list of the movies.
+3. Check the Output: The movies.txt file will contain the movies in reverse order, starting from the most recent to the oldest.
+## 📖 Code Breakdown
+- **Step 1**: Make an HTTP GET request to the provided URL to retrieve the HTML content.
+- **Step 2**: Parse the HTML content using BeautifulSoup.
+- **Step 3**: Locate all movie titles by finding the <h3> tags with the class "title".
+- **Step 4**: Reverse the order of the movie titles and save them to movies.txt.
+### Script
+```python
+import requests
+from bs4 import BeautifulSoup
 
-(Do *not* use https://www.empireonline.com/movies/features/best-movies-2/ which I've used in the screen recording)
+URL = "https://web.archive.org/web/20200518073855/https://www.empireonline.com/movies/features/best-movies-2/"
 
-# Solution
+response = requests.get(URL)
+website_html = response.text
 
-You can find the code from my walkthrough and solution as a downloadable .zip file in the course resources for this lesson. 
+soup = BeautifulSoup(website_html, "html.parser")
+all_movies = soup.find_all(name="h3", class_="title")
+movie_titles = [movie.getText() for movie in all_movies]
+movies = movie_titles[::-1]
+
+with open("movies.txt", mode="w") as file:
+    for movie in movies:
+        file.write(f"{movie}\n")
+```
+## ❓ FAQ
+Why use the Internet Archive's Wayback Machine?
+Empire Online's website structure has changed, making the original selector (h3.title) invalid. Using a cached version ensures the script continues to work as intended.
+---
